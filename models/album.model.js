@@ -37,10 +37,10 @@ const AlbumSchema = new mongoose.Schema({
   },
 });
 
-AlbumSchema.index({ likes: -1 });
-AlbumSchema.index({ releaseDate: -1 });
-AlbumSchema.index({ title: 'text'});
-AlbumSchema.index({ author: 1 });
+AlbumSchema.index({ likes: -1 });  // for easier sorting by likes
+AlbumSchema.index({ releaseDate: -1 });  // for easier sorting by release date
+AlbumSchema.index({ title: 'text'});  // for easier searching by album name
+AlbumSchema.index({ author: 1 });   // for easier searching by author
 
 const Album = mongoose.model("Album", AlbumSchema);
 
