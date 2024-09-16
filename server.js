@@ -6,6 +6,9 @@ const app = express();
 const port = process.env.PORT;
 const mongouri = process.env.MONGOURI;
 
+app.use(bodyParser.json());
+app.use(cors());
+
 // connecting to mongodb using mongoose
 const clientOptions = {
   serverApi: {
