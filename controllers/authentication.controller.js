@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model.js");
-require(dotenv).config();
+require("dotenv").config();
 
 const register = async (req, res) => {
   try {
@@ -23,6 +23,7 @@ const register = async (req, res) => {
 
     // hash password
     const hashPass = await bcrypt.hash(password, 11);
+    console.log(`user: ${userExists} & hash: ${hashPass}`);
     const newUser = new User({
       username,
       email,
@@ -33,9 +34,12 @@ const register = async (req, res) => {
       registrationDate,
     });
     await newUser.save();
+    console.log(newUser);
     return res.status(201).json({ message: "User created successfully" });
   } catch (err) {
-    return res.status(500).json({ message: `Error encoutnered: ${err}` });
+    res.status(500).json({ message: `Server error. Please try again later` });
+    console.error("User creation error: ", err);
+    return;
   }
 };
 
@@ -62,7 +66,9 @@ const login = async (req, res) => {
     });
     return res.status(200).json({ token });
   } catch (err) {
-    return res.status(500).json({ message: `Error encountered: ${err}` });
+    res.status(500).json({ message: `Server error. Please try again later` });
+    console.error("User creation error: ", err);
+    return;
   }
 };
 

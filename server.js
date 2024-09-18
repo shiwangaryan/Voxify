@@ -1,7 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser= require("body-parser");
+const cors = require("cors");
 const authRouter = require("./routes/authentication.routes");
 const verifyToken = require("./middleware/authentication.middleware");
+const createRouter = require("./routes/createContent.routes");
 require("dotenv").config();
 
 const app = express();
@@ -11,7 +14,7 @@ const mongouri = process.env.MONGOURI;
 app.use(bodyParser.json());
 app.use(cors());
 
-//----------------------- connecting to mongodb using mongoose:
+//----------------------- CONNECT MONGODB -----------------------
 const clientOptions = {
   serverApi: {
     version: "1",
@@ -36,10 +39,15 @@ app.get("/", (req, res) => {
   res.send("working fine!");
 });
 
-//----------------------- routes usage:
-app.use("/auth", authRouter);
+//----------------------- ROUTES -----------------------
 
-//----------------------- middleware to protect routes using jwt:
+// PROTECTED
 app.get('/protected', verifyToken, (req, res) => {
   res.status(200).json({message: "route protected successfully"});
 })
+
+// AUTH
+app.use("/auth", authRouter);
+
+// CREATE PODCAST/ALBUM
+app.use("/create", verifyToken , createRouter);
