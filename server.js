@@ -6,6 +6,7 @@ const authRouter = require("./routes/authentication.routes");
 const verifyToken = require("./middleware/authentication.middleware");
 const createRouter = require("./routes/createContent.routes");
 require("dotenv").config();
+require('./config/cloudinary.config');
 
 const app = express();
 const port = process.env.PORT;
