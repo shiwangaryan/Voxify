@@ -43,9 +43,9 @@ const register = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const loginUsernameCheck = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username } = req.body;
 
     // check if username exists or not
     const user = await User.findOne({ username });
@@ -53,6 +53,21 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    return res.status(200).json({ message: "User found", userId: user._id });
+  } catch (err) {
+    console.log(req.body);
+    res.status(500).json({ message: `Server error. Please try again later` });
+    console.error("User finding error: ", err);
+    return;
+  }
+};
+
+const loginPasswordCheck = async (req, res) => {
+  try {
+    const { userId, password } = req.body;
+
+    // check if username exists or not
+    const user = await User.findById(userId);
 
     const passMatch = await bcrypt.compare(password, user.password);
     // pass doesnt match
@@ -72,4 +87,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+module.exports = { register, loginUsernameCheck, loginPasswordCheck };
