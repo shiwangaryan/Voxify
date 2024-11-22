@@ -1,19 +1,12 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const User = require("../models/user.model.js");
+const User = require("../../models/user.model.js");
+const {sendVerificationMail}= require("./verifyemail.controller");
 require("dotenv").config();
 
 const register = async (req, res) => {
   try {
-    const {
-      username,
-      email,
-      password,
-      realName,
-      showRealName,
-      profilePicURL,
-      registrationDate,
-    } = req.body;
+    const { username, email, password, profilePicName } = req.body;
 
     // check if user exists already
     const userExists = await User.findOne({ username });
@@ -23,19 +16,18 @@ const register = async (req, res) => {
 
     // hash password
     const hashPass = await bcrypt.hash(password, 11);
-    console.log(`user: ${userExists} & hash: ${hashPass}`);
+    const emailToken = crypto.randomBytes(64).toString("hex");
     const newUser = new User({
       username,
       email,
       password: hashPass,
-      realName,
-      showRealName,
-      profilePicURL,
-      registrationDate,
+      profilePicName,
+      emailToken,
     });
     await newUser.save();
-    console.log(newUser);
-    return res.status(201).json({ message: "User created successfully" });
+
+    sendVerificationMail(email, emailToken);
+    return res.status(201).json({ message: "Verification mail sent" });
   } catch (err) {
     res.status(500).json({ message: `Server error. Please try again later` });
     console.error("User creation error: ", err);

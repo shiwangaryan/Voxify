@@ -1,5 +1,5 @@
-const Album = require("../models/album.model");
-const Podcast = require("../models/podcast.model");
+const Album = require("../../models/album.model");
+const Podcast = require("../../models/podcast.model");
 
 const createPodcastController = async (req, res) => {
   try {

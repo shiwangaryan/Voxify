@@ -16,17 +16,21 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  realName: {
+  emailToken: {
     type: String,
-    required: true,
   },
-  showRealName: {
+  verified: {
     type: Boolean,
     default: false,
   },
-  profilePicURL: {
+  realName: {
     type: String,
+    default: "",
     required: false,
+  },
+  profilePicName: {
+    type: String,
+    required: true,
   },
   registrationDate: {
     type: Date,
@@ -70,9 +74,9 @@ const UserSchema = mongoose.Schema({
   ],
 });
 
-UserSchema.index({ username: 1 });  // mongoose autimatically uses this when findbyone operation is done on username for login purpose
-UserSchema.index({ username: 'text' });  // mongoose uses this while searching in app for username automatically
+UserSchema.index({ username: 1 }); // mongoose autimatically uses this when findbyone operation is done on username for login purpose
+UserSchema.index({ username: "text" }); // mongoose uses this while searching in app for username automatically
 
-const User= mongoose.model('User', UserSchema);
+const User = mongoose.model("User", UserSchema);
 
-module.exports= User;
+module.exports = User;
