@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const User = require("../../models/user.model.js");
 const {sendVerificationMail}= require("./verifyemail.controller");
 require("dotenv").config();
@@ -17,12 +18,14 @@ const register = async (req, res) => {
     // hash password
     const hashPass = await bcrypt.hash(password, 11);
     const emailToken = crypto.randomBytes(64).toString("hex");
+    const emailTokenExpiry = Date.now() + 3600000; // 1 hour expiry
     const newUser = new User({
       username,
       email,
       password: hashPass,
       profilePicName,
       emailToken,
+      emailTokenExpiry
     });
     await newUser.save();
 
@@ -42,6 +45,13 @@ const loginUsernameCheck = async (req, res) => {
     // check if username exists or not
     const user = await User.findOne({ username });
 
+    if(user.verified== false) {
+      user.emailTokenExpiry= Date.now() + 3600000;
+      await user.save();
+      sendVerificationMail(user.email, user.emailToken);
+
+      return res.status(401).json({message: "Email not verified, check your email"});
+    }
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

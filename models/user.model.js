@@ -19,6 +19,10 @@ const UserSchema = mongoose.Schema({
   emailToken: {
     type: String,
   },
+  emailTokenExpiry: {
+    type: Date,
+    default: null,
+  },
   verified: {
     type: Boolean,
     default: false,
