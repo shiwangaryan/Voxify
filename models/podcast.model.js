@@ -6,9 +6,13 @@ const PodcastSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: {  // store creator ID
+  userId: {  // store creator name
     type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
+  },
+  author: {
+    type: String,
     required: true,
   },
   category: {
@@ -35,10 +39,6 @@ const PodcastSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  language: {
-    type: String,
-    required: true,
-  },
   likes: {
     type: Number,
     default: 0,
@@ -52,7 +52,8 @@ const PodcastSchema = new mongoose.Schema({
 PodcastSchema.index({ likes: -1 });   // for easier sorting by likes
 PodcastSchema.index({ releaseDate: -1 });   // for easier sorting by release date
 PodcastSchema.index({ title: "text"});  // for easier searching by podcast name
-PodcastSchema.index({ author: 1 });  // for easier searching by author
+PodcastSchema.index({ author: "text" });  // for easier searching by author
+PodcastSchema.index({ category: "text" });  // for easier searching by category
 
 const Podcast = mongoose.model("Podcast", PodcastSchema);
 

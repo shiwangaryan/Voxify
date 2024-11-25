@@ -66,7 +66,7 @@ const verifyUser = async (req, res) => {
       emailTokenExpiry: { $gt: Date.now() }, // as we saved the expiry value 1 hour ahead so it finds the user where emailTokenExpiry is greater than Date.now() i.e. within 1 hour time period
     });
     if (!user) {
-      return res.status(400).json({ message: "Incorrect token" });
+      return res.status(400).json({ message: "Incorrect or Expired token" });
     }
 
     user.verified = true;
@@ -81,28 +81,5 @@ const verifyUser = async (req, res) => {
   }
 };
 
-const resendVerificationMail = async (req, res) => {
-  try {
-    const { userId } = req.body;
 
-    const user = User.findById(userId);
-
-    if (!userId) {
-      return res.status(400).json({ message: "User not found" });
-    }
-    if (user.verified) {
-      return res.status(400).json({ message: "Email already verified" });
-    }
-
-    user.emailTokenExpiry = Date.now() + 3600000;
-    await user.save();
-
-    sendVerificationMail(user.email, user.emailToken);
-    return res.status(200).json({ message: "Verification mail sent" });
-  } catch (error) {
-    console.log("Error in resending verification mail: ", error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-module.exports = { sendVerificationMail, verifyUser, resendVerificationMail };
+module.exports = { sendVerificationMail, verifyUser };

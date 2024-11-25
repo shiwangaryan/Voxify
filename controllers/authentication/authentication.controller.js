@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../../models/user.model.js");
-const {sendVerificationMail}= require("./verifyemail.controller");
+const { sendVerificationMail } = require("./verifyemail.controller");
 require("dotenv").config();
 
 const register = async (req, res) => {
@@ -25,7 +25,7 @@ const register = async (req, res) => {
       password: hashPass,
       profilePicName,
       emailToken,
-      emailTokenExpiry
+      emailTokenExpiry,
     });
     await newUser.save();
 
@@ -45,15 +45,17 @@ const loginUsernameCheck = async (req, res) => {
     // check if username exists or not
     const user = await User.findOne({ username });
 
-    if(user.verified== false) {
-      user.emailTokenExpiry= Date.now() + 3600000;
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.verified == false) {
+      user.emailTokenExpiry = Date.now() + 3600000;
       await user.save();
       sendVerificationMail(user.email, user.emailToken);
 
-      return res.status(401).json({message: "Email not verified, check your email"});
-    }
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(401)
+        .json({ message: "Email not verified, check your email" });
     }
     return res.status(200).json({ message: "User found", userId: user._id });
   } catch (err) {
@@ -81,7 +83,9 @@ const loginPasswordCheck = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    return res.status(200).json({ token });
+    return res
+      .status(200)
+      .json({ token: token, profilePicName: user.profilePicName });
   } catch (err) {
     res.status(500).json({ message: `Server error. Please try again later` });
     console.error("User creation error: ", err);

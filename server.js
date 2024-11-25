@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser= require("body-parser");
+const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRouter = require("./routes/authentication.routes");
 const verifyToken = require("./middleware/authentication.middleware");
 const createRouter = require("./routes/createContent.routes");
+const generateRouter = require("./routes/generateContent.routes");
 require("dotenv").config();
-require('./config/cloudinary.config');
+require("./config/cloudinary.config");
 
 const app = express();
 const port = process.env.PORT;
@@ -43,12 +44,13 @@ app.get("/", (req, res) => {
 //----------------------- ROUTES -----------------------
 
 // PROTECTED
-app.get('/protected', verifyToken, (req, res) => {
-  res.status(200).json({message: "route protected successfully"});
-})
+app.get("/protected", verifyToken, (req, res) => {
+  res.status(200).json({ message: "route protected successfully" });
+});
 
 // AUTH
 app.use("/auth", authRouter);
 
 // CREATE PODCAST/ALBUM
-app.use("/create", verifyToken , createRouter);
+app.use("/create", verifyToken, createRouter);
+app.use("/generate", verifyToken, generateRouter);

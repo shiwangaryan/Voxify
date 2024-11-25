@@ -8,33 +8,33 @@ const createPodcastController = async (req, res) => {
     const userId = req.userId;
     const {
       title,
+      author,
       category,
       description,
       transcription,
       audioURL,
       duration,
       thumbnailURL,
-      language,
     } = req.body;
 
     const podcast = new Podcast({
       title,
-      author: userId,
+      userId,
+      author,
       category,
       description,
       transcription,
       audioURL,
       duration,
       thumbnailURL,
-      language,
     });
     await podcast.save();
     return res
       .status(201)
       .json({ message: `Podcast- ${title} created successfully` });
   } catch (err) {
-    res.status(500).json({ message: "Server error. Please try again later." });
     console.error(`Podcast creation error: ${err}`);
+    return res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
@@ -55,8 +55,8 @@ const createAlbumController = async (req, res) => {
       .status(201)
       .json({ message: `Album- ${title} created successfully` });
   } catch (err) {
-    res.status(500).json({ message: "Server error. Please try again later." });
     console.error(`Album creation error: ${err}`);
+    return res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
